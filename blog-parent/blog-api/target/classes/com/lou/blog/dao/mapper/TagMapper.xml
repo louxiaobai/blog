@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!--MyBatis配置文件-->
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="com.lou.blog.dao.mapper.TagMapper">
+
+
+    <!-- List<TagVo> findTagsByArticleId(Long articleId); -->
+    <!-- 因为表名和字段名字不匹配-->
+    <select id="findTagsByArticleId" parameterType="long" resultType="com.lou.blog.pojo.Tag">
+
+        select  id,avatar,tag_name as tagName from ms_tag
+        where id in (select tag_id from ms_article_tag where article_id=#{articleId})
+
+    </select>
+
+
+    <!--    List<Long> findHotsTagIds(int limit);-->
+    <select id="findHotsTagIds" parameterType="int" resultType="java.lang.Long">
+
+            select tag_id from ms_article_tag GROUP BY tag_id ORDER BY count(*) DESC LIMIT #{limit}
+
+
+    </select>
+    <!-- //select * from tag where id in (1,2,3,4,5)   -->
+    <select id="findTagsByTagIds" parameterType="list" resultType="com.lou.blog.pojo.Tag">
+        select id,tag_name as tagName from ms_tag
+        where  id in
+        <foreach collection="list" item="tagId" separator="," open="(" close=")">
+            #{tagId}
+        </foreach>
+    </select>
+
+
+
+</mapper>
